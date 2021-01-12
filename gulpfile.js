@@ -8,11 +8,14 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     rigger = require('gulp-rigger'),
     cssmin = require('gulp-minify-css'),
-    imagemin = require('gulp-imagemin'),
+    webp = require('gulp-webp'),
     pngquant = require('imagemin-pngquant'),
     rimraf = require('rimraf'),
     browserSync = require("browser-sync"),
-    reload = browserSync.reload;
+    reload = browserSync.reload,
+    imagemin = require('gulp-imagemin'),
+    imageresize = require('gulp-image-resize');
+
 
 var path = {
     build: { // пути для файлов после сборки
@@ -58,3 +61,30 @@ gulp.task('html:build', function () {
         .pipe(gulp.dest(path.build.html)) //Выплюнем их в папку build
         .pipe(reload({ stream: true })); //И перезагрузим наш сервер для обновлений
 });
+
+
+gulp.task('webp', () =>
+    gulp.src('src/images/**/*.*')
+        .pipe(webp({ quality: 80, preset: 'photo' }))
+        .pipe(gulp.dest('./build/images/'))
+);
+
+gulp.task('imagemin', () =>
+    gulp.src('src/images/**/*.*')
+        .pipe(imagemin({
+            quality: 80,
+            optimizationLevel: 6
+        }))
+        .pipe(gulp.dest('./build/images/'))
+);
+
+gulp.task('imageresize', () =>
+    gulp.src('src/images/**/*.*')
+        .pipe(imageresize({
+            width: 768,
+            height: 432,
+            crop : false,
+            upscale : false
+        }))
+        .pipe(gulp.dest('./build/images/'))
+);
